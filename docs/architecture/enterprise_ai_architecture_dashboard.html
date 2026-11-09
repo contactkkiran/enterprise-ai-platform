@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Enterprise AI Architecture | Interactive Blueprint</title>
+<style>
+:root{
+ --bg:#0b1020;--panel:#121a2e;--panel2:#17223a;--line:#263653;--text:#edf3ff;
+ --muted:#9fb0ca;--cyan:#52d6e8;--blue:#7aa7ff;--purple:#b49aff;--green:#68d6a3;
+ --orange:#ffbd75;--red:#ff8585;--shadow:0 16px 42px rgba(0,0,0,.25);
+}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(circle at 80% 0%,#1b2850 0,transparent 34%),var(--bg);color:var(--text);font:15px/1.55 Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+header{padding:30px clamp(18px,4vw,58px) 22px;border-bottom:1px solid var(--line);background:rgba(8,14,29,.72);position:sticky;top:0;z-index:10;backdrop-filter:blur(14px)}
+.eyebrow{color:var(--cyan);font-weight:800;letter-spacing:.15em;text-transform:uppercase;font-size:11px}
+h1{font-size:clamp(26px,4vw,42px);line-height:1.12;margin:8px 0 10px;letter-spacing:-.03em}
+.sub{color:var(--muted);max-width:900px;margin:0}
+.header-row{display:flex;justify-content:space-between;align-items:flex-end;gap:20px;flex-wrap:wrap}
+.status{border:1px solid #31516a;background:#102b3b;color:#a7f0f2;border-radius:999px;padding:7px 12px;font-size:12px;font-weight:700}
+nav{display:flex;gap:8px;flex-wrap:wrap;margin-top:22px}
+nav button,.btn{border:1px solid var(--line);background:#111b30;color:var(--muted);padding:9px 13px;border-radius:10px;cursor:pointer;font:inherit;font-size:13px;font-weight:700}
+nav button.active,nav button:hover,.btn.primary{background:#17364a;border-color:#34778a;color:#d9fbff}
+main{max-width:1500px;margin:auto;padding:28px clamp(16px,3vw,44px) 60px}
+section{display:none;animation:fade .2s ease}section.active{display:block}
+@keyframes fade{from{opacity:.5;transform:translateY(4px)}to{opacity:1;transform:none}}
+.section-head{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap;margin:0 0 20px}
+h2{font-size:25px;margin:0 0 5px;letter-spacing:-.02em}
+h3{font-size:16px;margin:0 0 8px}
+p{margin:6px 0;color:var(--muted)}
+.grid{display:grid;grid-template-columns:repeat(12,1fr);gap:15px}
+.card{background:linear-gradient(155deg,rgba(23,34,58,.96),rgba(15,24,42,.96));border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:var(--shadow);min-width:0}
+.span-12{grid-column:span 12}.span-8{grid-column:span 8}.span-7{grid-column:span 7}.span-6{grid-column:span 6}.span-5{grid-column:span 5}.span-4{grid-column:span 4}.span-3{grid-column:span 3}
+.kpi{font-size:27px;font-weight:850;letter-spacing:-.04em}.kpi-label{color:var(--muted);font-size:12px}
+.pill{display:inline-block;border:1px solid var(--line);border-radius:999px;padding:3px 8px;font-size:11px;color:var(--muted);margin:2px}
+.pill.cyan{color:var(--cyan);border-color:#28606d}.pill.green{color:var(--green);border-color:#2e6a58}.pill.purple{color:var(--purple);border-color:#594d80}.pill.orange{color:var(--orange);border-color:#73583b}
+.diagram{display:flex;flex-direction:column;gap:10px}
+.layer{border:1px solid var(--line);border-radius:13px;padding:13px;background:#101a2e}
+.layer-title{display:flex;justify-content:space-between;gap:12px;align-items:center;font-weight:800;margin-bottom:9px}
+.nodes{display:grid;grid-template-columns:repeat(auto-fit,minmax(135px,1fr));gap:8px}
+.node{border:1px solid #314565;background:#192844;border-radius:10px;padding:10px;text-align:center;font-size:12px;color:#dce8ff;min-height:58px;display:flex;align-items:center;justify-content:center;flex-direction:column}
+.node small{color:var(--muted);font-size:10px;font-weight:500}
+.arrow{text-align:center;color:var(--cyan);font-size:22px;line-height:1}
+.accent-cyan{border-left:3px solid var(--cyan)}.accent-purple{border-left:3px solid var(--purple)}.accent-green{border-left:3px solid var(--green)}.accent-orange{border-left:3px solid var(--orange)}
+.callout{padding:13px 15px;border:1px solid #31516a;background:#102b3b;border-radius:12px;color:#c9f6fb}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{text-align:left;padding:11px 9px;border-bottom:1px solid var(--line);vertical-align:top}
+th{color:#c7d8f3;font-size:11px;text-transform:uppercase;letter-spacing:.08em}
+td{color:var(--muted)}
+td strong{color:var(--text)}
+ul.clean{padding-left:18px;color:var(--muted);margin:8px 0}
+ul.clean li{margin:6px 0}
+.flow{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;align-items:stretch}
+.flow-step{position:relative;background:#192844;border:1px solid #314565;border-radius:12px;padding:12px;font-size:12px}
+.flow-step b{display:block;color:var(--text);margin-bottom:4px}
+.flow-step span{color:var(--muted)}
+.controls{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+select,input{background:#0d1729;color:var(--text);border:1px solid var(--line);padding:9px 11px;border-radius:9px;font:inherit}
+.detail{display:none;margin-top:12px;padding:14px;border-radius:12px;background:#0d1729;border:1px solid #35506e;color:var(--muted)}
+.detail.show{display:block}
+.domain{cursor:pointer;transition:.15s}
+.domain:hover,.domain.selected{border-color:var(--cyan);background:#1a354a}
+.domain.selected{box-shadow:0 0 0 2px rgba(82,214,232,.14) inset}
+.tag{font-size:10px;color:var(--cyan);font-weight:800;letter-spacing:.08em;text-transform:uppercase}
+footer{border-top:1px solid var(--line);padding:22px clamp(18px,4vw,58px);color:var(--muted);font-size:12px}
+@media(max-width:900px){.span-8,.span-7,.span-5,.span-4,.span-3{grid-column:span 6}.flow{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:600px){.span-8,.span-7,.span-6,.span-5,.span-4,.span-3{grid-column:span 12}.flow{grid-template-columns:1fr}.header-row{align-items:flex-start}}
+</style>
+</head>
+<body>
+<header>
+ <div class="header-row">
+  <div>
+   <div class="eyebrow">Enterprise AI blueprint · reference architecture</div>
+   <h1>Enterprise AI Architecture & Model Factory</h1>
+   <p class="sub">A reusable platform blueprint for RAG, fine-tuning, agent orchestration, model serving, security and governance across multiple business domains.</p>
+  </div>
+  <div class="status">● Architecture reference · Interactive</div>
+ </div>
+ <nav aria-label="Architecture sections">
+  <button class="active" data-tab="overview">Overview</button>
+  <button data-tab="platform">Platform architecture</button>
+  <button data-tab="rag">RAG factory</button>
+  <button data-tab="tuning">Model factory</button>
+  <button data-tab="agents">Agentic AI</button>
+  <button data-tab="domains">Business domains</button>
+  <button data-tab="governance">Governance & operations</button>
+  <button data-tab="delivery">Project delivery</button>
+ </nav>
+</header>
+<main>
+<section id="overview" class="active">
+ <div class="section-head"><div><h2>Executive overview</h2><p>Build once, govern centrally, configure by domain, and scale through reusable capabilities.</p></div><span class="pill cyan">Enterprise-wide platform</span></div>
+ <div class="grid">
+  <div class="card span-3"><div class="kpi">1</div><div class="kpi-label">Shared AI platform</div><p>Common foundations for multiple business units.</p></div>
+  <div class="card span-3"><div class="kpi">N</div><div class="kpi-label">Business domains</div><p>Insurance, loans, cards, HR, wealth and more.</p></div>
+  <div class="card span-3"><div class="kpi">3</div><div class="kpi-label">Adaptation patterns</div><p>Prompting, RAG and fine-tuning selected by use case.</p></div>
+  <div class="card span-3"><div class="kpi">360°</div><div class="kpi-label">Lifecycle governance</div><p>Data, models, deployments, security and monitoring.</p></div>
+  <div class="card span-8">
+   <h3>Enterprise capability map</h3>
+   <div class="diagram">
+    <div class="layer"><div class="layer-title">Business experience layer <span class="pill">Consumers & employees</span></div><div class="nodes"><div class="node">Insurance portal<small>Claims & policy service</small></div><div class="node">Loans workspace<small>Application processing</small></div><div class="node">HR assistant<small>Employee self-service</small></div><div class="node">Operations console<small>Case & workflow support</small></div></div></div>
+    <div class="arrow">↓</div>
+    <div class="layer"><div class="layer-title">Reusable AI services <span class="pill cyan">Shared capabilities</span></div><div class="nodes"><div class="node">API gateway<small>Identity, quotas, routing</small></div><div class="node">Agent orchestration<small>Tools & workflows</small></div><div class="node">RAG services<small>Retrieval & grounding</small></div><div class="node">Model adaptation<small>Fine-tune & evaluate</small></div></div></div>
+    <div class="arrow">↓</div>
+    <div class="layer"><div class="layer-title">AI foundation & control plane</div><div class="nodes"><div class="node">Model gateway<small>OpenAI, Anthropic, open models</small></div><div class="node">Vector & data stores<small>Qdrant, PostgreSQL, object storage</small></div><div class="node">Model registry<small>Versions & approvals</small></div><div class="node">Governance<small>Security, audit, observability</small></div></div></div>
+   </div>
+  </div>
+  <div class="card span-4">
+   <h3>Architectural principles</h3>
+   <ul class="clean">
+    <li><strong>Reusable by design:</strong> shared services, configurable domain adapters.</li>
+    <li><strong>Model-agnostic:</strong> provider abstraction and controlled model routing.</li>
+    <li><strong>Knowledge separated:</strong> business knowledge lives in governed data stores, not assumed model memory.</li>
+    <li><strong>Secure by default:</strong> tenant isolation, least privilege and data minimization.</li>
+    <li><strong>Measured delivery:</strong> evaluate quality, latency, cost and risk before release.</li>
+   </ul>
+   <div class="callout"><strong>Key decision:</strong> Do not create one fine-tuned model per product automatically. Identify reusable tasks and prove that fine-tuning improves a measured outcome.</div>
+  </div>
+  <div class="card span-12">
+   <h3>Choose the right pattern</h3>
+   <div class="grid">
+    <div class="card span-4 accent-cyan"><span class="tag">Prompting</span><h3>Change instructions</h3><p>Use when behaviour can be achieved through clear instructions, examples and structured output constraints.</p></div>
+    <div class="card span-4 accent-green"><span class="tag">RAG</span><h3>Use current enterprise knowledge</h3><p>Use when answers depend on private, changing or source-attributable documents and records.</p></div>
+    <div class="card span-4 accent-purple"><span class="tag">Fine-tuning</span><h3>Adapt task behaviour</h3><p>Use when representative examples show a persistent behaviour gap that prompting alone cannot economically close.</p></div>
+   </div>
+  </div>
+ </div>
+</section>
+
+<section id="platform">
+ <div class="section-head"><div><h2>End-to-end platform architecture</h2><p>Logical view of the shared platform, from business channels through AI services to enterprise controls.</p></div><span class="pill cyan">Logical architecture</span></div>
+ <div class="card">
+  <div class="diagram">
+   <div class="layer"><div class="layer-title">1 · Channels & business applications</div><div class="nodes"><div class="node">Web / mobile apps</div><div class="node">Employee copilots</div><div class="node">Contact centre</div><div class="node">Batch & event workflows</div><div class="node">Partner APIs</div></div></div><div class="arrow">↓ HTTPS · OAuth / OIDC</div>
+   <div class="layer"><div class="layer-title">2 · API & experience management</div><div class="nodes"><div class="node">API gateway<small>Authentication · throttling</small></div><div class="node">Tenant resolver<small>Domain & entitlement context</small></div><div class="node">Request validation<small>Schema · input limits</small></div><div class="node">Policy enforcement<small>Allowed tools & data scopes</small></div></div></div><div class="arrow">↓ governed request</div>
+   <div class="layer"><div class="layer-title">3 · AI application services</div><div class="nodes"><div class="node">Prompt management<small>Templates · versions</small></div><div class="node">Agent orchestration<small>Workflow · tool calls</small></div><div class="node">RAG orchestration<small>Retrieve · rerank · cite</small></div><div class="node">Model router<small>Provider & model selection</small></div><div class="node">Guardrails<small>Input/output checks</small></div></div></div><div class="arrow">↓ context + task</div>
+   <div class="layer"><div class="layer-title">4 · Model & knowledge services</div><div class="nodes"><div class="node">Hosted LLMs<small>OpenAI · Anthropic</small></div><div class="node">Open models<small>Hugging Face ecosystem</small></div><div class="node">Embedding models<small>Vector representation</small></div><div class="node">Vector database<small>Qdrant · pgvector</small></div><div class="node">Model registry<small>Approved versions</small></div></div></div><div class="arrow">↓ governed data access</div>
+   <div class="layer"><div class="layer-title">5 · Enterprise data & integration</div><div class="nodes"><div class="node">Document store<small>PDF · DOCX · HTML</small></div><div class="node">Operational systems<small>Core banking · CRM · claims</small></div><div class="node">Data platform<small>Lakehouse · warehouse</small></div><div class="node">Business APIs<small>System-of-record actions</small></div><div class="node">Metadata & audit<small>Lineage · permissions</small></div></div></div>
+   <div class="layer"><div class="layer-title">Cross-cutting control plane</div><div class="nodes"><div class="node">Identity & access</div><div class="node">Secrets & key management</div><div class="node">PII / DLP controls</div><div class="node">Evaluation & monitoring</div><div class="node">Cost & usage controls</div><div class="node">Audit & compliance</div></div></div>
+  </div>
+ </div>
+ <div class="grid" style="margin-top:15px">
+  <div class="card span-6"><h3>Control plane vs data plane</h3><p><strong>Control plane:</strong> policies, model approvals, prompt versions, access rules, evaluation thresholds and deployment configuration.</p><p><strong>Data plane:</strong> runtime requests, retrieval, inference, tool execution and business-system interactions.</p></div>
+  <div class="card span-6"><h3>Multi-tenancy approach</h3><p>Resolve tenant and user identity at the gateway. Enforce tenant-scoped retrieval filters, storage boundaries, encryption, quotas and audit records. Never rely on prompt instructions as an authorization boundary.</p></div>
+ </div>
+</section>
+
+<section id="rag">
+ <div class="section-head"><div><h2>RAG factory</h2><p>Reusable document-to-answer pipeline with source grounding and domain-aware retrieval.</p></div><span class="pill green">Knowledge adaptation</span></div>
+ <div class="card">
+  <h3>RAG reference flow</h3>
+  <div class="flow">
+   <div class="flow-step"><b>1. Ingest</b><span>PDFs, policies, manuals, databases, business APIs</span></div>
+   <div class="flow-step"><b>2. Parse & govern</b><span>OCR, metadata, ACLs, classification, PII handling</span></div>
+   <div class="flow-step"><b>3. Chunk & embed</b><span>Chunking strategy, embeddings, versioned index</span></div>
+   <div class="flow-step"><b>4. Retrieve</b><span>Hybrid search, filters, reranking, relevance checks</span></div>
+   <div class="flow-step"><b>5. Generate</b><span>Grounded prompt, citations, answer validation</span></div>
+  </div>
+  <div class="arrow" style="margin:12px">↓</div>
+  <div class="layer"><div class="layer-title">Knowledge stores <span class="pill green">Domain-scoped</span></div><div class="nodes"><div class="node">Insurance policy index<small>Policy terms · exclusions</small></div><div class="node">Loan policy index<small>Eligibility · documentation</small></div><div class="node">HR knowledge index<small>Leave · benefits · procedures</small></div><div class="node">Shared reference index<small>Approved enterprise standards</small></div></div></div>
+ </div>
+ <div class="grid" style="margin-top:15px">
+  <div class="card span-6"><h3>Reusable RAG components</h3><ul class="clean"><li>Connectors and ingestion scheduler</li><li>Document parser and OCR adapter</li><li>Chunking and embedding service</li><li>Vector / keyword retrieval abstraction</li><li>Reranking and context assembly</li><li>Citation and answer-quality evaluator</li></ul></div>
+  <div class="card span-6"><h3>Design decisions to document</h3><ul class="clean"><li>Chunk size and overlap by document type</li><li>Embedding model and index version</li><li>Hybrid vs vector-only search</li><li>Metadata filters and document-level ACLs</li><li>Freshness SLA and deletion propagation</li><li>Fallback when evidence is missing or weak</li></ul></div>
+  <div class="card span-12"><div class="callout"><strong>Critical security rule:</strong> Apply authorization filters before retrieved content is sent to the LLM. A model must not receive documents the requesting user is not permitted to access.</div></div>
+ </div>
+</section>
+
+<section id="tuning">
+ <div class="section-head"><div><h2>Model adaptation & fine-tuning factory</h2><p>A governed pipeline for deciding, preparing, training, evaluating and publishing task-specialized models.</p></div><span class="pill purple">Behaviour adaptation</span></div>
+ <div class="card">
+  <h3>Factory pipeline</h3>
+  <div class="flow">
+   <div class="flow-step"><b>1. Use-case intake</b><span>Business objective, baseline, success metric, risk tier</span></div>
+   <div class="flow-step"><b>2. Data preparation</b><span>Approved examples, quality checks, PII controls, splits</span></div>
+   <div class="flow-step"><b>3. Model selection</b><span>Capability, licence, deployment, cost, data constraints</span></div>
+   <div class="flow-step"><b>4. Adapt & evaluate</b><span>SFT / LoRA where suitable; compare against baseline</span></div>
+   <div class="flow-step"><b>5. Register & release</b><span>Model card, approval, version, deployment and rollback</span></div>
+  </div>
+ </div>
+ <div class="grid" style="margin-top:15px">
+  <div class="card span-7"><h3>Illustrative domain task portfolio</h3>
+   <table><thead><tr><th>Domain</th><th>Candidate task</th><th>Potential adaptation</th></tr></thead><tbody>
+    <tr><td><strong>Insurance</strong></td><td>Claim narrative classification</td><td>Prompt baseline → SFT if needed</td></tr>
+    <tr><td><strong>Personal loans</strong></td><td>Document type / field extraction</td><td>Structured extraction, OCR + validation; fine-tune only if justified</td></tr>
+    <tr><td><strong>Home loans</strong></td><td>Application exception categorization</td><td>Task-specific classifier or adapted LLM</td></tr>
+    <tr><td><strong>Credit cards</strong></td><td>Customer intent routing</td><td>Prompting or SFT using labelled intents</td></tr>
+    <tr><td><strong>HR</strong></td><td>Employee request classification</td><td>RAG for policy facts; optional SFT for routing</td></tr>
+   </tbody></table>
+  </div>
+  <div class="card span-5"><h3>Model adaptation methods</h3>
+   <p><span class="pill purple">SFT</span> Supervised fine-tuning on curated input-output examples.</p>
+   <p><span class="pill purple">LoRA</span> Parameter-efficient adaptation using low-rank trainable updates.</p>
+   <p><span class="pill purple">QLoRA</span> Quantized base model plus LoRA to reduce training memory requirements.</p>
+   <p><span class="pill orange">Preference optimization</span> Optimize response preferences where suitable preference data and infrastructure exist.</p>
+  </div>
+  <div class="card span-12"><h3>Interactive model factory decision helper</h3><p>Select the main requirement to see a recommended starting pattern. This is a design aid, not an automatic approval.</p>
+   <div class="controls"><select id="need"><option value="knowledge">Answer from frequently updated private documents</option><option value="format">Consistent output schema or response format</option><option value="classify">High-volume domain-specific classification</option><option value="style">Consistent specialized tone or task behaviour</option><option value="combined">Current knowledge plus specialized task behaviour</option></select><button class="btn primary" id="decide">Recommend pattern</button></div>
+   <div class="detail" id="decision"></div>
+  </div>
+ </div>
+</section>
+
+<section id="agents">
+ <div class="section-head"><div><h2>Agentic AI & orchestration layer</h2><p>Controlled workflows that combine models, retrieval, tools and human approvals.</p></div><span class="pill cyan">Workflow intelligence</span></div>
+ <div class="card">
+  <div class="diagram">
+   <div class="layer"><div class="layer-title">User request & policy context</div><div class="nodes"><div class="node">Authenticated user</div><div class="node">Tenant / role</div><div class="node">Business intent</div></div></div><div class="arrow">↓</div>
+   <div class="layer"><div class="layer-title">Orchestrator / supervisor</div><div class="nodes"><div class="node">Intent classification</div><div class="node">Plan & route</div><div class="node">Context management</div><div class="node">Policy & budget checks</div></div></div><div class="arrow">↓</div>
+   <div class="layer"><div class="layer-title">Specialized agents and tools</div><div class="nodes"><div class="node">Policy retrieval agent<small>RAG search</small></div><div class="node">Document agent<small>OCR · extraction</small></div><div class="node">Case agent<small>CRM / claims API</small></div><div class="node">Calculation tool<small>Deterministic logic</small></div><div class="node">Human review<small>Approval checkpoint</small></div></div></div><div class="arrow">↓</div>
+   <div class="layer"><div class="layer-title">Validated response or approved action</div><div class="nodes"><div class="node">Output validation</div><div class="node">Audit event</div><div class="node">User response</div><div class="node">System-of-record update</div></div></div>
+  </div>
+ </div>
+ <div class="grid" style="margin-top:15px">
+  <div class="card span-6"><h3>Where agents help</h3><ul class="clean"><li>Multi-step workflows across systems</li><li>Tasks requiring dynamic tool selection</li><li>Coordinating retrieval, extraction and validation</li><li>Escalation to human review for exceptions</li></ul></div>
+  <div class="card span-6"><h3>Where deterministic code is better</h3><ul class="clean"><li>Interest, premium or eligibility calculations</li><li>Permission checks and policy enforcement</li><li>Transaction posting and irreversible actions</li><li>Exact business rules and threshold validation</li></ul></div>
+ </div>
+</section>
+
+<section id="domains">
+ <div class="section-head"><div><h2>Business domain integration</h2><p>Shared platform, domain-specific configuration, data boundaries and evaluation.</p></div><span class="pill cyan">Multi-domain operating model</span></div>
+ <div class="grid">
+  <div class="card span-4 domain selected" data-domain="insurance"><span class="tag">Domain 01</span><h3>Insurance</h3><p>Claims intake, policy Q&A, document classification and case summarization.</p><span class="pill green">RAG + workflow</span><span class="pill purple">Optional SFT</span></div>
+  <div class="card span-4 domain" data-domain="loans"><span class="tag">Domain 02</span><h3>Personal & home loans</h3><p>Document extraction, application completeness, exception categorization and policy retrieval.</p><span class="pill green">RAG + extraction</span><span class="pill purple">Optional SFT</span></div>
+  <div class="card span-4 domain" data-domain="cards"><span class="tag">Domain 03</span><h3>Credit cards</h3><p>Customer intent routing, dispute support, product information and agent assistance.</p><span class="pill green">RAG + tools</span><span class="pill purple">Optional SFT</span></div>
+  <div class="card span-4 domain" data-domain="hr"><span class="tag">Domain 04</span><h3>Human resources</h3><p>Employee policy assistant, leave and benefits queries, request classification.</p><span class="pill green">RAG</span><span class="pill purple">Optional SFT</span></div>
+  <div class="card span-4 domain" data-domain="wealth"><span class="tag">Domain 05</span><h3>Wealth management</h3><p>Research retrieval, portfolio document summarization and advisor workflow support.</p><span class="pill green">RAG + review</span></div>
+  <div class="card span-4 domain" data-domain="shared"><span class="tag">Shared services</span><h3>Enterprise operations</h3><p>Knowledge search, service desk triage, document processing and internal copilots.</p><span class="pill green">Reusable services</span></div>
+  <div class="card span-12"><h3 id="domain-title">Insurance – reference configuration</h3><div id="domain-detail" class="callout">Use a policy knowledge index with document-level permissions; connect claim systems through approved APIs; evaluate classification quality and citation support; require human approval for claim decisions or payment actions.</div></div>
+ </div>
+</section>
+
+<section id="governance">
+ <div class="section-head"><div><h2>Security, governance & operations</h2><p>Controls must apply across data ingestion, retrieval, inference, tools and model lifecycle.</p></div><span class="pill orange">Non-functional requirements</span></div>
+ <div class="grid">
+  <div class="card span-6"><h3>Security & privacy</h3><ul class="clean"><li>SSO, OAuth/OIDC, RBAC/ABAC and least privilege</li><li>Tenant and document-level access enforcement</li><li>Encryption in transit and at rest; secrets vault</li><li>PII detection, masking and retention controls</li><li>Prompt injection and unsafe content defenses</li><li>Tool allowlists, scoped credentials and approval gates</li></ul></div>
+  <div class="card span-6"><h3>Responsible AI & model risk</h3><ul class="clean"><li>Use-case risk classification and documented intended use</li><li>Representative evaluation datasets and acceptance thresholds</li><li>Bias, robustness, hallucination and toxicity testing as applicable</li><li>Human oversight for consequential decisions</li><li>Model cards, data lineage and change approvals</li><li>Incident response, rollback and periodic revalidation</li></ul></div>
+  <div class="card span-12"><h3>Operational observability</h3><table><thead><tr><th>Dimension</th><th>Example metrics</th><th>Why it matters</th></tr></thead><tbody>
+   <tr><td><strong>Quality</strong></td><td>Task accuracy, groundedness, citation precision, refusal quality</td><td>Detect poor or unsupported answers</td></tr>
+   <tr><td><strong>Performance</strong></td><td>Latency p50/p95, throughput, error rate, queue depth</td><td>Meet service-level objectives</td></tr>
+   <tr><td><strong>Cost</strong></td><td>Tokens, model cost per task, retrieval cost, cost per tenant</td><td>Control unit economics</td></tr>
+   <tr><td><strong>Safety</strong></td><td>Policy violations, PII events, blocked tool calls, escalations</td><td>Manage operational risk</td></tr>
+   <tr><td><strong>Reliability</strong></td><td>Provider availability, retries, fallback rate, index freshness</td><td>Maintain continuity</td></tr>
+  </tbody></table></div>
+  <div class="card span-12"><div class="callout"><strong>Governance principle:</strong> An LLM response is not authorization. Validate identity, entitlements, business rules and transaction limits in trusted application services before exposing data or executing actions.</div></div>
+ </div>
+</section>
+
+<section id="delivery">
+ <div class="section-head"><div><h2>Project-level implementation roadmap</h2><p>A phased delivery plan to turn the reference architecture into a working enterprise platform.</p></div><span class="pill cyan">Suggested delivery sequence</span></div>
+ <div class="grid">
+  <div class="card span-6"><span class="tag">Phase 1 · Foundation</span><h3>Platform skeleton</h3><ul class="clean"><li>Define target use cases, personas and success metrics</li><li>Set up repo, CI/CD, environments and secrets</li><li>Implement API gateway, identity and tenant context</li><li>Build model-provider abstraction and logging</li></ul></div>
+  <div class="card span-6"><span class="tag">Phase 2 · Knowledge</span><h3>Reusable RAG service</h3><ul class="clean"><li>Build document ingestion and parsing connectors</li><li>Add chunking, embeddings and vector search</li><li>Enforce document ACL filters</li><li>Add citations, evaluation and freshness monitoring</li></ul></div>
+  <div class="card span-6"><span class="tag">Phase 3 · Model factory</span><h3>Adaptation pipeline</h3><ul class="clean"><li>Define use-case intake and baseline evaluation</li><li>Prepare governed training and validation datasets</li><li>Run approved SFT / LoRA experiments where justified</li><li>Register, approve, deploy and roll back versions</li></ul></div>
+  <div class="card span-6"><span class="tag">Phase 4 · Orchestration</span><h3>Agent workflows</h3><ul class="clean"><li>Implement workflow orchestration and tool contracts</li><li>Integrate business APIs with scoped credentials</li><li>Add deterministic validations and human approvals</li><li>Test failure paths, retries and idempotency</li></ul></div>
+  <div class="card span-6"><span class="tag">Phase 5 · Domain rollout</span><h3>Pilot and scale</h3><ul class="clean"><li>Start with one bounded, low-risk use case</li><li>Prove quality, security, latency and cost</li><li>Package reusable domain configuration</li><li>Onboard additional divisions incrementally</li></ul></div>
+  <div class="card span-6"><span class="tag">Phase 6 · Operate</span><h3>Continuous improvement</h3><ul class="clean"><li>Monitor model, retrieval and agent performance</li><li>Review drift, incidents and user feedback</li><li>Re-evaluate after model, data or prompt changes</li><li>Retire stale versions and unused components</li></ul></div>
+  <div class="card span-12"><h3>Illustrative project structure</h3>
+   <pre style="white-space:pre-wrap;background:#0a1425;border:1px solid var(--line);padding:15px;border-radius:12px;color:#c9ddfa;font-size:12px">enterprise-ai-platform/
+├── apps/
+│   ├── insurance-assistant/
+│   ├── loan-processing/
+│   └── employee-assistant/
+├── services/
+│   ├── api-gateway/
+│   ├── model-router/
+│   ├── rag-service/
+│   ├── agent-orchestrator/
+│   └── evaluation-service/
+├── factories/
+│   ├── data-preparation/
+│   ├── fine-tuning/
+│   └── model-registration/
+├── connectors/
+│   ├── document-sources/
+│   └── enterprise-apis/
+├── governance/
+│   ├── policies/
+│   ├── access-control/
+│   └── audit/
+├── infra/
+│   ├── docker/
+│   └── deployment/
+└── tests/
+    ├── unit/
+    ├── integration/
+    ├── security/
+    └── llm-evaluation/</pre>
+  </div>
+ </div>
+</section>
+</main>
+<footer>
+ <strong>Architecture note:</strong> This is a vendor-neutral reference blueprint, not a production deployment specification. Select technologies, model providers, regulatory controls and deployment topology based on enterprise constraints, data residency, workload, risk and measured evaluation results.
+</footer>
+<script>
+const tabs=[...document.querySelectorAll('nav button')];
+tabs.forEach(btn=>btn.addEventListener('click',()=>{
+ tabs.forEach(b=>b.classList.toggle('active',b===btn));
+ document.querySelectorAll('main section').forEach(s=>s.classList.toggle('active',s.id===btn.dataset.tab));
+ window.scrollTo({top:0,behavior:'smooth'});
+}));
+const decisionText={
+ knowledge:['Recommended starting point: RAG','Ingest and index the approved source documents. Enforce document-level authorization, freshness and citations. Fine-tuning is usually not the first answer when the main need is current factual knowledge.'],
+ format:['Recommended starting point: structured prompting and schema validation','Use JSON/schema-constrained output where supported, validate in application code, and add examples. Consider fine-tuning only if repeated format failures remain material after prompt and validation improvements.'],
+ classify:['Recommended starting point: benchmark prompting or a classical classifier, then evaluate SFT','Create a representative labelled dataset and compare a simple baseline with an LLM prompt. Fine-tune only if it improves agreed metrics, cost or latency on held-out data.'],
+ style:['Recommended starting point: prompt examples, then evaluate SFT','Define a style guide and representative examples. If consistent behaviour remains difficult and examples are available, test supervised fine-tuning on an eligible model.'],
+ combined:['Recommended starting point: RAG + task adaptation if evidence supports it','Use RAG for current enterprise facts and fine-tuning only for the repeatable task behaviour. Keep retrieval authorization separate from model behaviour.']
+};
+document.getElementById('decide').addEventListener('click',()=>{
+ const [title,body]=decisionText[document.getElementById('need').value];
+ const box=document.getElementById('decision');box.innerHTML='<strong style="color:#edf3ff">'+title+'</strong><p>'+body+'</p>';box.classList.add('show');
+});
+const domainInfo={
+ insurance:['Insurance – reference configuration','Use a policy knowledge index with document-level permissions; connect claim systems through approved APIs; evaluate classification quality and citation support; require human approval for claim decisions or payment actions.'],
+ loans:['Loans – reference configuration','Separate personal-loan and home-loan data scopes. Use RAG for current eligibility and policy content; use OCR and deterministic validation for documents and calculations; route exceptions for human review.'],
+ cards:['Credit cards – reference configuration','Use RAG for current product terms and dispute procedures; classify customer intents; integrate card systems through narrow, authenticated APIs; require step-up verification and approvals for sensitive actions.'],
+ hr:['HR – reference configuration','Use an HR knowledge index with role-based document access. Ground answers in current policies; avoid exposing employee records across roles; route sensitive employment decisions to authorized HR staff.'],
+ wealth:['Wealth management – reference configuration','Retrieve approved research and product disclosures with provenance and freshness controls. Keep suitability and investment decisions under regulated workflows and qualified human oversight.'],
+ shared:['Enterprise operations – reference configuration','Provide reusable search, summarization and triage services with tenant context, common observability, standardized evaluation and domain-specific access policies.']
+};
+document.querySelectorAll('.domain').forEach(card=>card.addEventListener('click',()=>{
+ document.querySelectorAll('.domain').forEach(c=>c.classList.toggle('selected',c===card));
+ const [title,body]=domainInfo[card.dataset.domain];
+ document.getElementById('domain-title').textContent=title;
+ document.getElementById('domain-detail').textContent=body;
+}));
+</script>
+</body>
+</html>
